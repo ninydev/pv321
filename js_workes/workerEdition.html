@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1> Block GUI </h1>
+
+<div id="forMessageFront">Date time of click here</div>
+<div id="forMessageHiLoad">Date time from hiLoad</div>
+
+<button id="btnClick"> Click me GUI </button>
+<button id="btnStartHiLoad"> Start hiLoad</button>
+<button id="btnStopHiLoad"> Stop hiLoad</button>
+
+<script>
+
+    const cycleTime = 3000;
+
+    const btnClick = document.getElementById('btnClick');
+    const forMessageFront = document.getElementById('forMessageFront');
+    const forMessageHiLoad = document.getElementById('forMessageHiLoad');
+    const btnStartHiLoad = document.getElementById('btnStartHiLoad');
+    const btnStopHiLoad = document.getElementById('btnStopHiLoad');
+
+    let worker = null;
+
+    function startWorker () {
+        if (window.Worker) {
+
+            if (worker) {
+                forMessageFront.innerHTML = 'Worker already started';
+                return
+            }
+
+
+            worker = new Worker(new URL('http://localhost:63342/js_workes/workerExample.js'),
+                { type: 'module' })
+
+            worker.postMessage('start')
+
+            worker.onmessage = (event) => {
+                forMessageHiLoad.innerHTML = 'From worker ' + event.data
+            }
+
+            worker.onerror = (error) => {
+                console.error(error)
+            }
+        }
+    }
+
+
+    btnStartHiLoad.addEventListener('click', () => {
+        startWorker ();
+    });
+
+    btnStopHiLoad.addEventListener('click', () => {
+        if (worker) {
+            worker.terminate();
+            worker = null;
+            forMessageHiLoad.innerHTML = 'Worker stopped';
+        }
+    });
+
+
+
+    btnClick.addEventListener('click', () => {
+        let newColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        forMessageFront.innerHTML = '' + new Date();
+        forMessageFront.style.color = newColor;
+    });
+
+
+</script>
+
+</body>
+</html>

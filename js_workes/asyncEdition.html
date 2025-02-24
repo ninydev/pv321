@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1> Async Await </h1>
+
+<div id="forMessageFront">Date time of click here</div>
+<div id="forMessageHiLoad">Date time from hiLoad</div>
+
+<button id="btnClick"> Click me</button>
+<button id="btnStartHiLoad"> Start hiLoad</button>
+
+<script>
+
+    const cycleTime = 3000;
+
+    const btnClick = document.getElementById('btnClick');
+    const forMessageFront = document.getElementById('forMessageFront');
+    const forMessageHiLoad = document.getElementById('forMessageHiLoad');
+    const btnStartHiLoad = document.getElementById('btnStartHiLoad');
+
+    function asyncStep (endTime) {
+        if (Date.now() > endTime) {
+            forMessageHiLoad.innerHTML = 'Hi Load: stop';
+            return;
+        }
+
+        const randomNumber = Math.random()
+        forMessageHiLoad.innerHTML = 'Hi Load: ' + randomNumber;
+        setTimeout(asyncStep, 0, endTime);
+
+    }
+
+    function hiLoad() {
+
+        const endTime = Date.now() + cycleTime
+        asyncStep(endTime);
+
+
+        // while (Date.now() < endTime) {
+        //     const randomNumber = Math.random()
+        //     forMessageHiLoad.innerHTML = 'Hi Load: ' + randomNumber;
+        // }
+
+        // while (true) {
+        //     console.log('Hello');
+        // }
+    }
+
+
+
+    btnStartHiLoad.addEventListener('click', () => {
+        hiLoad();
+    });
+
+    btnClick.addEventListener('click', () => {
+        let newColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        forMessageFront.innerHTML = '' + new Date();
+        forMessageFront.style.color = newColor;
+    });
+
+
+</script>
+
+</body>
+</html>

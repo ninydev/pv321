@@ -1,10 +1,7 @@
 package network02.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import network02.common.Commands;
-import network02.common.Configuration;
-import network02.common.Request;
-import network02.common.Response;
+import network02.common.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,12 +24,17 @@ public class StartClient {
             System.out.println("Send JSON: " + jsonRequest);
 
             out.println(jsonRequest);
+            Response response;
 
-            String jsonResponse = in.readLine();
-            System.out.println("Catch JSON: " + jsonResponse);
+            do {
+                String jsonResponse = in.readLine();
+                // System.out.println("Catch JSON: " + jsonResponse);
 
-            Response response = objectMapper.readValue(jsonResponse, Response.class);
-            System.out.println(response);
+                response = objectMapper.readValue(jsonResponse, Response.class);
+                System.out.println(response);
+            } while (response.getStatus()!= Status.OK);
+
+
 
 
 

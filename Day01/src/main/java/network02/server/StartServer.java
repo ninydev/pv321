@@ -1,5 +1,6 @@
 package network02.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import network02.common.Configuration;
 import network02.common.Request;
@@ -12,11 +13,30 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class StartServer {
+
     private static ObjectMapper objectMapper = new ObjectMapper();
+    public static ExecutorService executor = Executors.newCachedThreadPool();
+    public static List<ServerClient> clients = new ArrayList<>();
+
+    public static void sendMessage(String message) throws JsonProcessingException {
+        for (ServerClient client : clients) {
+            client.sendMessage(message);
+        }
+    }
 
     public static void main(String[] args) {
+
+        // ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Configuration.maxThreads);
+        ExecutorService executor = Executors.newCachedThreadPool();
+
 
         try (ServerSocket serverSocket = new ServerSocket(Configuration.port)) {
 
@@ -24,26 +44,21 @@ public class StartServer {
             System.out.println("Server Started on port: " + Configuration.port + " and waiting clients");
             while (true) {
 
-                try (Socket clientSocket = serverSocket.accept() ) {
-                    System.out.println("Client connected: " + clientSocket.getInetAddress());
+                Socket clientSocket = serverSocket.accept();
+//                System.out.println("Queue size: " + executor.getQueue().size());
+//                if (executor.getQueue().size() > Configuration.maxThreads * 2) {
+//                    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+//                    Response response = new Response(Status.Error, "Server is overload");
+//                    out.println(objectMapper.writeValueAsString(response));
+//                }
+                ServerClient client = new ServerClient(clientSocket);
+                clients.add(client);
+                executor.execute( client);
 
-                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-                    String jsonRequest = in.readLine();
-                    System.out.println("Catch JSON: " + jsonRequest);
-
-                    Request request = objectMapper.readValue(jsonRequest, Request.class);
-                    System.out.println(request);
-
-                    Response response = new Response(Status.OK, null);
-                    String jsonResponse = objectMapper.writeValueAsString(response);
-                    System.out.println("Send JSON: " + jsonResponse);
-
-                    out.println(jsonResponse);
-                }
             }
         } catch (IOException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

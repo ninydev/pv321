@@ -23,6 +23,8 @@ public class MockApi {
                 System.err.println("Status: " + status);
                 throw new Exception("Status: " + status);
             }
+            // 40x
+            // 50x
 
             java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(con.getInputStream()));
             String inputLine;

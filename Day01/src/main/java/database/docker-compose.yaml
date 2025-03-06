@@ -2,6 +2,19 @@ version: '3.1'
 
 services:
 
+  pv211.db.mongo:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: QweAsdZxc!23
+    ports:
+      - "27020:27017"
+
+  pv211.db.redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
   pv211.db.postgres:
     image: postgres:17
     ports:

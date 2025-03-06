@@ -1,7 +1,28 @@
 version: '3.1'
 
 services:
-  pv211.db:
+
+  pv211.db.postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: QweAsdZxc!23
+      POSTGRES_DB: java
+      POSTGRES_USER: java
+
+
+  pv211.db.mysql:
+    image: mysql:9
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: QweAsdZxc!23
+      MYSQL_DATABASE: java
+      MYSQL_USER: java
+      MYSQL_PASSWORD: QweAsdZxc!23
+
+  pv211.db.mariadb:
     image: mariadb:11.0
     ports:
       - "3306:3306"

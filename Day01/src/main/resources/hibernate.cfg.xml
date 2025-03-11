@@ -22,5 +22,8 @@
 
         <mapping class="hiber.entities.UserModel"/>
         <mapping class="hiber.entities.UserProfileModel"/>
+        <mapping class="hiber.entities.PostModel"/>
+        <mapping class="hiber.entities.CommentModel"/>
+        <mapping class="hiber.entities.TagModel"/>
     </session-factory>
 </hibernate-configuration>

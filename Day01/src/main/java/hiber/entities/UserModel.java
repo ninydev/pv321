@@ -4,6 +4,10 @@ import com.mongodb.lang.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Entity  // Говорит Hibernate, что это сущность
 @Table(name = "users")  // Имя таблицы в БД
 
@@ -15,7 +19,18 @@ import lombok.*;
 @RequiredArgsConstructor
 public class UserModel {
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)  // Двусторонняя связь
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name); // Убедитесь, что все поля корректно обрабатываются
+    }
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
+    private List<PostModel> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentModel> comments = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)  // Двусторонняя связь
     @ToString.Exclude
     private UserProfileModel userProfile;
 

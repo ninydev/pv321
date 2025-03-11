@@ -3,6 +3,8 @@ package hiber.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name="user_profiles")
 
@@ -11,6 +13,11 @@ import lombok.*;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class UserProfileModel {
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, phoneNumber); // Убедитесь, что все поля корректно обрабатываются
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

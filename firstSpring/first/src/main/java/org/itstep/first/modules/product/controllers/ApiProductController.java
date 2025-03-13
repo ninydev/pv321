@@ -1,9 +1,7 @@
 package org.itstep.first.modules.product.controllers;
 
 import org.itstep.first.modules.product.entities.ProductModel;
-import org.itstep.first.modules.product.repositories.ProductRepository;
 import org.itstep.first.modules.product.services.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +30,9 @@ public class ApiProductController {
     }
 
     @PostMapping
-    public ProductModel createProduct(@RequestBody ProductModel product) {
-        return productService.save(product);
+    public ResponseEntity<ProductModel> createProduct(@RequestBody ProductModel product) {
+        ProductModel savedProduct = productService.save(product);
+        return ResponseEntity.status(201).body(savedProduct);
     }
 
     @PutMapping("/{id}")

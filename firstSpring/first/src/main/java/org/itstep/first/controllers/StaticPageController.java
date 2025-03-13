@@ -16,10 +16,6 @@ public class StaticPageController {
         return "pages/home";
     }
 
-    @GetMapping("/")
-    public String homeError() {
-        return "pages/home";
-    }
 
     @GetMapping("/contact")
     public String contact() {

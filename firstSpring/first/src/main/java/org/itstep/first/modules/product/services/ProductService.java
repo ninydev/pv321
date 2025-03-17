@@ -1,6 +1,8 @@
 package org.itstep.first.modules.product.services;
 
+import org.itstep.first.modules.product.dto.CreateProductDto;
 import org.itstep.first.modules.product.entities.ProductModel;
+import org.itstep.first.modules.product.mappers.ProductMapper;
 import org.itstep.first.modules.product.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,8 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
-    public ProductModel save(ProductModel product) {
+    public ProductModel create(CreateProductDto productDto) {
+        ProductModel product = new ProductModel(null, productDto.getName(), productDto.getPrice()); // = ProductMapper.INSTANCE.toModel(productDto);
         return productRepository.save(product);
     }
 

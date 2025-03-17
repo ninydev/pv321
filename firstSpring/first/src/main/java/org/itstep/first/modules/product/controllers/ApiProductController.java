@@ -1,5 +1,7 @@
 package org.itstep.first.modules.product.controllers;
 
+import jakarta.validation.Valid;
+import org.itstep.first.modules.product.dto.CreateProductDto;
 import org.itstep.first.modules.product.entities.ProductModel;
 import org.itstep.first.modules.product.services.ProductService;
 import org.springframework.http.ResponseEntity;
@@ -30,23 +32,23 @@ public class ApiProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductModel> createProduct(@RequestBody ProductModel product) {
-        ProductModel savedProduct = productService.save(product);
+    public ResponseEntity<ProductModel> createProduct(@RequestBody @Valid CreateProductDto productDto) {
+        ProductModel savedProduct = productService.create(productDto);
         return ResponseEntity.status(201).body(savedProduct);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductModel> updateProduct(@PathVariable Long id, @RequestBody ProductModel productDetails) {
-        Optional<ProductModel> product = Optional.ofNullable(productService.findById(id));
-        if (product.isPresent()) {
-            ProductModel updatedProduct = product.get();
-            updatedProduct.setName(productDetails.getName());
-            updatedProduct.setPrice(productDetails.getPrice());
-            return ResponseEntity.ok(productService.save(updatedProduct));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<ProductModel> updateProduct(@PathVariable Long id, @RequestBody ProductModel productDetails) {
+//        Optional<ProductModel> product = Optional.ofNullable(productService.findById(id));
+//        if (product.isPresent()) {
+//            ProductModel updatedProduct = product.get();
+//            updatedProduct.setName(productDetails.getName());
+//            updatedProduct.setPrice(productDetails.getPrice());
+//            return ResponseEntity.ok(productService.save(updatedProduct));
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {

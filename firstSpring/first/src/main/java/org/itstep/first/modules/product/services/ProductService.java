@@ -25,7 +25,8 @@ public class ProductService {
     }
 
     public ProductModel create(CreateProductDto productDto) {
-        ProductModel product = new ProductModel(null, productDto.getName(), productDto.getPrice()); // = ProductMapper.INSTANCE.toModel(productDto);
+        ProductModel product =
+                new ProductModel(null, productDto.getName(), productDto.getPrice()); // = ProductMapper.INSTANCE.toModel(productDto);
         return productRepository.save(product);
     }
 

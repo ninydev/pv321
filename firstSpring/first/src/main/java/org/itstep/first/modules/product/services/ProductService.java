@@ -4,6 +4,8 @@ import org.itstep.first.modules.product.dto.CreateProductDto;
 import org.itstep.first.modules.product.entities.ProductModel;
 import org.itstep.first.modules.product.mappers.ProductMapper;
 import org.itstep.first.modules.product.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +18,8 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductModel> findAll() {
-        return productRepository.findAll();
+    public Page<ProductModel> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public ProductModel findById(Long id) {

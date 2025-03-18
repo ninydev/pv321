@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import org.itstep.first.modules.product.dto.CreateProductDto;
 import org.itstep.first.modules.product.entities.ProductModel;
 import org.itstep.first.modules.product.services.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,10 +31,28 @@ public class ApiProductController {
         this.productService = productService;
     }
 
+//    @GetMapping
+//    public List<ProductModel> getAllProducts() {
+//        return productService.findAll();
+//    }
+
     @GetMapping
-    public List<ProductModel> getAllProducts() {
-        return productService.findAll();
+    public ResponseEntity<Map<String, Object>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductModel> productPage = productService.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", productPage.getContent());
+        response.put("currentPage", productPage.getNumber());
+        response.put("totalItems", productPage.getTotalElements());
+        response.put("totalPages", productPage.getTotalPages());
+        return ResponseEntity.ok(response);
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductModel> getProductById(@PathVariable Long id) {

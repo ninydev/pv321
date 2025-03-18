@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/products")
@@ -47,11 +48,16 @@ public class WebProductController {
     @PostMapping
     public String create(@Valid CreateProductDto productDto,
                          BindingResult bindingResult,
+                         @RequestParam("file") MultipartFile file,
                          org.springframework.ui.Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("product", productDto);
             model.addAttribute("errors", bindingResult.getAllErrors());
             return "products/create";
+        }
+        if (!file.isEmpty()) {
+            // Process the file (e.g., save it to the server)
+            // You can add your file processing logic here
         }
         productService.create(productDto);
         return "redirect:/products";

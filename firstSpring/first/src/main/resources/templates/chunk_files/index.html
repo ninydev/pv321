@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chunk File Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #progress { width: 100%; background: #eee; height: 20px; margin-top: 10px; }
+        #progress-bar { height: 100%; width: 0%; background: #4caf50; text-align: center; color: white; }
+    </style>
+</head>
+<body>
+
+<h2>Upload File in Chunks</h2>
+<input type="file" id="fileInput">
+<button onclick="uploadFile()">Upload</button>
+
+<div id="progress">
+    <div id="totalChunks"></div>
+    <div id="progress-bar">0%</div>
+</div>
+
+<p id="status"></p>
+
+<script>
+    const CHUNK_SIZE = 0.5 * 1024 * 1024; // 512 KB
+
+    async function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        if (!fileInput.files.length) {
+            alert("Please select a file first.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+        let uploadedChunks = 0;
+        document.getElementById("totalChunks").innerText = totalChunks
+
+        for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+            const start = chunkIndex * CHUNK_SIZE;
+            const end = Math.min(start + CHUNK_SIZE, file.size);
+            const chunk = file.slice(start, end);
+
+            const formData = new FormData();
+            formData.append("chunk", chunk);
+
+            // Отправляем чанк на сервер
+            let response = await fetch("/chunk_files", {
+                method: "POST",
+                headers: {
+                    "X-Chunk-Index": chunkIndex,
+                    "X-Total-Chunks": totalChunks,
+                    "X-File-Name": file.name
+                },
+                body: chunk
+            });
+
+            if (response.status !== 200) {
+                alert("Failed to upload chunk " + chunkIndex);
+                return;
+            }
+
+            uploadedChunks++;
+            updateProgress(uploadedChunks, totalChunks);
+        }
+
+        document.getElementById("status").innerText = "Upload complete!";
+    }
+
+    function updateProgress(uploadedChunks, totalChunks) {
+        const percentage = Math.round((uploadedChunks / totalChunks) * 100);
+        document.getElementById("progress-bar").style.width = percentage + "%";
+        document.getElementById("progress-bar").innerText = percentage + "%";
+    }
+</script>
+
+</body>
+</html>

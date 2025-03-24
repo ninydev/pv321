@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -25,7 +22,7 @@ public class FirstFileUploadController {
     @Value("${storage.private}")
     private String storagePrivate;
 
-    @Value("${storage.private}")
+    @Value("${storage.public}")
     private String storagePublic;
 
 
@@ -36,6 +33,31 @@ public class FirstFileUploadController {
     public String index() {
         return "first_files/index";
     }
+
+
+
+
+    @GetMapping("/private/{fileName}")
+    public ResponseEntity<?> getPrivateFile(@PathVariable String fileName) {
+        Path filePath = Path.of(storagePrivate, fileName);
+
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Файл не найден");
+        }
+
+        try {
+            byte[] fileContent = Files.readAllBytes(filePath);
+            String contentType = Files.probeContentType(filePath);
+            return ResponseEntity.ok()
+                    .header("Content-Type", contentType)
+                    .body(fileContent);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при чтении файла");
+        }
+    }
+
+
+
 
     @PostMapping
     public String upload(@RequestParam("file") MultipartFile file) throws IOException {
@@ -48,21 +70,21 @@ public class FirstFileUploadController {
 //            throw new RuntimeException(e);
 //        }
 
-        logger.info("Received file: {}", file.getOriginalFilename());
-        logger.info("File size: {}", file.getSize());
-        logger.info("File content type: {}", file.getContentType());
-
-        logger.info("System temp dir: {}", System.getProperty("java.io.tmpdir"));
-        logger.info("Tomcat temp dir: {}", System.getProperty("catalina.base") + "/temp");
+//        logger.info("Received file: {}", file.getOriginalFilename());
+//        logger.info("File size: {}", file.getSize());
+//        logger.info("File content type: {}", file.getContentType());
+//
+//        logger.info("System temp dir: {}", System.getProperty("java.io.tmpdir"));
+//        logger.info("Tomcat temp dir: {}", System.getProperty("catalina.base") + "/temp");
 
         // Создание папки, если её нет
-        File directory = new File(storagePrivate);
+        File directory = new File(storagePublic);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
         // Генерация пути сохранения
-        Path filePath = Path.of(storagePrivate, file.getOriginalFilename());
+        Path filePath = Path.of(storagePublic + "/cars", file.getOriginalFilename());
 
         try {
             // Сохранение файла
@@ -70,6 +92,9 @@ public class FirstFileUploadController {
         } catch (IOException e) {
             return "Ошибка загрузки файла";
         }
+
+        logger.info("filePath: {}", filePath.toString());
+
 
         return "first_files/index";
     }

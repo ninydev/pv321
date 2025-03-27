@@ -66,6 +66,7 @@ public class UserSessionController {
         UserModel user = userService.findByEmail(userDto.getEmail());
 
         if (user != null && user.getPassword().equals(userDto.getPassword())) {
+
             // Создаем сессию
             HttpSession session = request.getSession(true); // Создаем сессию
             logger.info("Session Id: " + request.getSession().getId());

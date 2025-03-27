@@ -16,4 +16,12 @@ public class UserService {
     public UserModel findByEmail(String email) {
         return users.get(email);
     }
+
+    public UserModel findByCred(String email, String password) {
+        UserModel user = users.get(email);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
+    }
 }

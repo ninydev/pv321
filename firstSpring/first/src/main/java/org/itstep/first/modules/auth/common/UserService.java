@@ -1,4 +1,4 @@
-package org.itstep.first.modules.auth;
+package org.itstep.first.modules.auth.common;
 
 import org.springframework.stereotype.Service;
 

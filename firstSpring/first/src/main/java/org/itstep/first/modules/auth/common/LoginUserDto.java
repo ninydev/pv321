@@ -1,4 +1,4 @@
-package org.itstep.first.modules.auth;
+package org.itstep.first.modules.auth.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,9 +1,14 @@
-package org.itstep.first.modules.auth;
+package org.itstep.first.modules.auth.session;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.itstep.first.modules.auth.common.LoginUserDto;
+import org.itstep.first.modules.auth.common.UserModel;
+import org.itstep.first.modules.auth.common.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +24,23 @@ public class UserSessionController {
 
     public UserSessionController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("test")
+    public ResponseEntity<String> testAuth(HttpServletRequest request) {
+
+        UserModel user = null;
+
+        if (request.getSession(false) != null) {
+            logger.info("Session Id: " + request.getSession().getId());
+            user = (UserModel) request.getSession().getAttribute("user");
+            if (user != null) {
+                return ResponseEntity.ok("200 OK: " + user.toString());
+            }
+        }
+        logger.info("Session is not created");
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("403 Forbidden");
     }
 
     @GetMapping

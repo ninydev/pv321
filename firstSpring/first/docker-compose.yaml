@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+
+  pv211.db.mariadb:
+    image: mariadb:11.0
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: QweAsdZxc!23
+      MYSQL_ROOT_PASSWORD: QweAsdZxc!23
+      MYSQL_DATABASE: java
+      MYSQL_USER: java
+      MYSQL_PASSWORD: QweAsdZxc!23
+
+  pv211.adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+
+  pv211.phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - 8081:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: pv211.db
+      MYSQL_ROOT_PASSWORD: QweAsdZxc!23

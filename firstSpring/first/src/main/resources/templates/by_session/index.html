@@ -6,7 +6,27 @@
 </head>
 <body>
 
-<h1> Start Session </h1>
+<h1> Auth by Session Session </h1>
+
+<form action="/by_session" method="post">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="submit">Login</button>
+</form>
+
+<!-- Display error message if present -->
+<div>
+    <p th:if="${param.error}" style="color:red;">Invalid credentials, please try again.</p>
+</div>
+
+<!-- Display user information if logged in -->
+<div th:if="${user != null}">
+    <h2>Welcome, <span th:text="${user.email}">User</span>!</h2>
+</div>
 
 </body>
 </html>

@@ -8,5 +8,27 @@
 
 <h1> Home </h1>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+<script>
+    // Подключаемся к WebSocket
+    const socket = new SockJS('http://localhost:8088/ws'); // Сервер Spring
+    const stompClient = Stomp.over(socket);
+
+    // Подключение к серверу
+    stompClient.connect({}, function () {
+        console.log('WebSocket соединение установлено');
+
+        // Подписка на уведомления
+        stompClient.subscribe('/topic/notifications', function (message) {
+            alert('Новое уведомление: ' + message.body);
+        });
+
+        // Можно сразу отправить тестовое сообщение
+        stompClient.send('/app/notify', {}, "Привет из браузера!");
+    });
+
+</script>
 </body>
 </html>

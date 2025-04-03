@@ -11,8 +11,18 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 public class SseNotificationController {
+    private final SsePublicService ssePublicService;
 
-    @GetMapping("/sse")
+    public SseNotificationController(SsePublicService ssePublicService) {
+        this.ssePublicService = ssePublicService;
+    }
+
+    @GetMapping("sse/public")
+    public SseEmitter subscribe() {
+        return ssePublicService.subscribe();
+    }
+
+    @GetMapping("/sse/get_time")
     public SseEmitter streamNotifications() {
         SseEmitter emitter = new SseEmitter(0L); // Бесконечный таймаут
         Executors.newSingleThreadScheduledExecutor()

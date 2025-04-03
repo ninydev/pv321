@@ -1,4 +1,5 @@
 package org.itstep.first.modules.redis;
+import org.itstep.first.modules.sse.SsePublicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.Message;
@@ -9,6 +10,11 @@ import org.springframework.stereotype.Service;
 public class RedisMessageSubscriber implements MessageListener {
 
     private final Logger logger = LoggerFactory.getLogger(RedisMessageSubscriber.class);
+    private final SsePublicService ssePublicService;
+
+    public RedisMessageSubscriber(SsePublicService ssePublicService) {
+        this.ssePublicService = ssePublicService;
+    }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -20,5 +26,6 @@ public class RedisMessageSubscriber implements MessageListener {
             logger.error("Ошибка при ожидании: {}", e.getMessage());
         }
         logger.info("\uD83D\uDCE9 Получено сообщение: {}", receivedMessage);
+        ssePublicService.sendNotification("Redis: " + receivedMessage);
     }
 }

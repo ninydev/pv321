@@ -18,7 +18,8 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <script>
-    const eventSource = new EventSource("http://localhost:8088/sse");
+    // const eventSource = new EventSource("http://localhost:8088/sse/get_time");
+    const eventSource = new EventSource("/sse/public");
 
     eventSource.onmessage = function (event) {
         const newNotification = document.createElement("li");

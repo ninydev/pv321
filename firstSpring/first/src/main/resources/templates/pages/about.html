@@ -3,10 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>About</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
 
 <h1> About </h1>
+<div>
+    <h2>Notifications</h2>
+    <ul id="notifications">
+        <!-- Здесь будут появляться уведомления -->
+    </ul>
+</div>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+    const eventSource = new EventSource("http://localhost:8088/sse");
+
+    eventSource.onmessage = function (event) {
+        const newNotification = document.createElement("li");
+        newNotification.textContent = event.data;
+        document.getElementById("notifications").appendChild(newNotification);
+    };
+
+    eventSource.onerror = function () {
+        Toastify({
+            text: "Ошибка соединения с сервером",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#FF0000",
+        }).showToast();
+        eventSource.close(); // Закрываем соединение при ошибке
+    };
+</script>
 
 </body>
 </html>

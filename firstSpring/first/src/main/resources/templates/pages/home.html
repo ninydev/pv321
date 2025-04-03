@@ -11,6 +11,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
     // Подключаемся к WebSocket
     const socket = new SockJS('http://localhost:8088/ws'); // Сервер Spring
@@ -18,11 +20,30 @@
 
     // Подключение к серверу
     stompClient.connect({}, function () {
-        console.log('WebSocket соединение установлено');
+        Toastify({
+            text: "WebSocket подключен",
+            className: "info",
+            duration: 2000,
+            style: {
+                background: "linear-gradient(to right, #0000ff, #000044)",
+            }
+        }).showToast();
 
         // Подписка на уведомления
         stompClient.subscribe('/topic/notifications', function (message) {
-            alert('Новое уведомление: ' + message.body);
+            Toastify({
+                text: message.body,
+                duration: 3000,
+                newWindow: false,
+                close: false,
+                gravity: "bottom", // `top` or `bottom`
+                position: "left", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+                onClick: function(){} // Callback after click
+            }).showToast();
         });
 
         // Можно сразу отправить тестовое сообщение

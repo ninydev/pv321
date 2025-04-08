@@ -73,8 +73,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutUrl("/logout") // URL, по которому будет происходить logout
+                        .logoutSuccessUrl("/login?logout=true") // Куда редиректить после logout
+                        .invalidateHttpSession(true) // Инвалидация HTTP-сессии
+                        .deleteCookies("JSESSIONID") // Удаление куков
                         .permitAll()
                 );
 

@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -26,6 +28,7 @@ public class SecurityConfig {
         this.userService = userService;
     }
 
+
     @Bean
     public UserDetailsService userDetailsService() {
         logger.info("Trying to create UserDetailsService in SecurityConfig");
@@ -33,7 +36,8 @@ public class SecurityConfig {
             try {
                 return userService.loadUserByUsername(username);
             } catch (UsernameNotFoundException e) {
-                throw new RuntimeException(e);
+                logger.error(e.getMessage());
+                throw e;
             }
         };
     }

@@ -1,5 +1,6 @@
 package org.itstep.chat.mappers;
 
+import org.itstep.chat.dto.users.CreateUserDto;
 import org.itstep.chat.entities.UserModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -11,7 +12,8 @@ public interface UserMapper {
 
     // UserDetails mapUserModelToUserDetails(UserModel userModel);
 
-    // UserModel toModel(LoginUserDto dto);
+    UserModel toModel(CreateUserDto dto);
+
     // LoginUserDto toDto(UserModel model);
     // UserModel toModel(RegisterUserDto dto);
     // RegisterUserDto toDto(UserModel model);

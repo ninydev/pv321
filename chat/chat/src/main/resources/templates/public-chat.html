@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chat</title>
+    <meta name="_csrf" content="${_csrf.token}">
+    <meta name="_csrf_header" content="${_csrf.headerName}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+        }
+        #chat-container {
+            display: flex;
+            flex-grow: 1;
+            height: 100%;
+        }
+        aside {
+            width: 250px;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        main {
+            flex-grow: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow-y: auto;
+        }
+        #message-input {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .author {
+            font-weight: bold;
+        }
+        .message-content {
+            font-style: italic;
+        }
+        .user {
+            margin-bottom: 10px;
+        }
+        .username {
+            font-weight: bold;
+        }
+        #send-button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #send-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <!-- Список пользователей (aside) -->
+    <aside id="users-list">
+        <h4>Users Online</h4>
+        <div class="user">
+            <span class="username">User1</span>
+        </div>
+        <div class="user">
+            <span class="username">User2</span>
+        </div>
+        <!-- Здесь будет выводиться список пользователей с сервера -->
+    </aside>
+
+    <!-- Сообщения (main) -->
+    <main id="messages-container">
+        <div class="message">
+            <span class="author">User1</span>: <span class="message-content">Hello, this is a chat message!</span>
+        </div>
+        <div class="message">
+            <span class="author">User2</span>: <span class="message-content">Hi, how are you?</span>
+        </div>
+        <!-- Здесь будут выводиться сообщения с сервера -->
+    </main>
+</div>
+
+<!-- Ввод сообщения (footer) -->
+<footer id="message-input">
+    <textarea id="message-text" placeholder="Type a message..." style="width: 100%; height: 50px;"></textarea>
+    <button id="send-button">Send</button>
+</footer>
+
+<script>
+
+    // Получаем CSRF токен из страницы
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+
+    document.getElementById('send-button').addEventListener('click', function() {
+        const messageText = document.getElementById('message-text').value;
+        if (messageText.trim() !== '') {
+            // Здесь будет код для отправки сообщения на сервер
+            console.log('Message sent:', messageText);
+
+            fetch('/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: messageText }),
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Message sent successfully');
+                    } else {
+                        console.error('Failed to send message');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+
+            document.getElementById('message-text').value = ''; // Очистить поле ввода
+        }
+    });
+
+    // Здесь будет код для получения сообщений и пользователей с сервера
+
+</script>
+
+</body>
+</html>

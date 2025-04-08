@@ -78,9 +78,15 @@ public class SecurityConfig {
                         .invalidateHttpSession(true) // Инвалидация HTTP-сессии
                         .deleteCookies("JSESSIONID") // Удаление куков
                         .permitAll()
-                );
+                )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**") // Игнорируем CSRF для API
+                )
+
+                ;
 
         return http.build();
+        }
 
 //        logger.info("Creating SecurityFilterChain in SecurityConfig");
 //
@@ -99,5 +105,5 @@ public class SecurityConfig {
 //                        .logoutSuccessUrl("/"));
 //
 //        return http.build();
-    }
+
 }

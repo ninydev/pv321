@@ -2,6 +2,7 @@ package org.itstep.chat.controllers;
 
 import jakarta.validation.Valid;
 import org.itstep.chat.dto.users.CreateUserDto;
+import org.itstep.chat.dto.users.LoginDto;
 import org.itstep.chat.mappers.UserMapper;
 import org.itstep.chat.services.UserService;
 import org.springframework.stereotype.Controller;
@@ -47,8 +48,9 @@ public class AuthController {
         return "redirect:/login";
     }
 
-    @GetMapping ("/login")
-    public String login() {
+    @GetMapping("/login")
+    public String login(Model model) {
+        model.addAttribute("loginDto", new LoginDto());
         return "auth/login";
     }
 

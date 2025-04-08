@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,44 +24,78 @@ public class SecurityConfig {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UserService userService) {
+    public SecurityConfig(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
     }
 
 
     @Bean
     public UserDetailsService userDetailsService() {
-        logger.info("Trying to create UserDetailsService in SecurityConfig");
-        return username -> {
-            try {
-                return userService.loadUserByUsername(username);
-            } catch (UsernameNotFoundException e) {
-                logger.error(e.getMessage());
-                throw e;
-            }
-        };
+        return userService;
+//        return username -> {
+//            try {
+//                return userService.loadUserByUsername(username);
+//            } catch (UsernameNotFoundException e) {
+//                logger.error(e.getMessage());
+//                throw e;
+//            }
+//        };
     }
 
     @Bean
     public SecurityFilterChain
     securityFilterChain(HttpSecurity http) throws Exception {
-        logger.info("Creating SecurityFilterChain in SecurityConfig");
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register").permitAll()
-                        //.requestMatchers("/admin").hasRole("ADMIN")
-                        //.requestMatchers("/user")
-                        //.hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/register", "/login",
+                                "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/profile", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/"));
+                        .logoutSuccessUrl("/login?logout=true")
+                        .permitAll()
+                );
 
         return http.build();
+
+//        logger.info("Creating SecurityFilterChain in SecurityConfig");
+//
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/register").permitAll()
+//                        //.requestMatchers("/admin").hasRole("ADMIN")
+//                        //.requestMatchers("/user")
+//                        //.hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(withDefaults())
+//                .logout(logout -> logout
+//                        .logoutUrl("/logout")
+//                        .logoutSuccessUrl("/"));
+//
+//        return http.build();
     }
 }
